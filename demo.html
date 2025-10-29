@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura - Modular Background Effect Studio Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .container {
+      position: relative;
+      min-height: 100vh;
+    }
+
+    #background-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      color: #aaa;
+      margin-bottom: 40px;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 12px;
+      color: #667eea;
+    }
+
+    .info-panel {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .info-panel pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="background-canvas"></canvas>
+  
+  <div class="container">
+    <div class="content">
+      <h1>🌟 Aura</h1>
+      <p class="subtitle">A Modular Background Effect Studio</p>
+
+      <div class="controls">
+        <h2>Choose Your Effect</h2>
+        <div class="control-group">
+          <button onclick="loadCosmicScene()">🌌 Cosmic Space</button>
+          <button onclick="loadOceanScene()">🌊 Ocean Waves</button>
+          <button onclick="loadFireScene()">🔥 Fire Energy</button>
+          <button onclick="loadCustomScene()">✨ Custom Mix</button>
+        </div>
+        <div class="control-group">
+          <button onclick="toggleAnimation()">⏯️ Toggle Animation</button>
+          <button onclick="exportConfig()">💾 Export Config</button>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🎨 Node-Based Effects</h3>
+          <p>Build complex visual effects by connecting modular nodes. Each node performs a specific function, from particle generation to gradient rendering.</p>
+        </div>
+        <div class="feature-card">
+          <h3>📚 Layered Composition</h3>
+          <p>Stack multiple effect layers with independent opacity, blend modes, and z-ordering. Create depth and richness in your backgrounds.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🤖 AI-Assisted Design</h3>
+          <p>Get intelligent suggestions for effects, parameters, and color palettes based on your chosen theme. Let AI optimize your scene.</p>
+        </div>
+        <div class="feature-card">
+          <h3>⚡ High Performance</h3>
+          <p>Canvas-based rendering with efficient frame management. Smooth 60 FPS animations even with complex multi-layer compositions.</p>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <h3>Scene Information</h3>
+        <pre id="scene-info">Loading...</pre>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // This is a mock implementation for demonstration
+    // In a real scenario, this would import from the built Aura library
+    
+    let currentAura = null;
+    let isAnimating = true;
+
+    // Mock Aura implementation for demo
+    class MockAura {
+      constructor(theme) {
+        this.theme = theme;
+        this.canvas = document.getElementById('background-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        this.startTime = Date.now();
+        this.animationId = null;
+        
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      start() {
+        isAnimating = true;
+        this.animate();
+      }
+
+      stop() {
+        isAnimating = false;
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+      }
+
+      animate() {
+        if (!isAnimating) return;
+
+        const time = (Date.now() - this.startTime) * 0.001;
+        this.render(time);
+        
+        this.animationId = requestAnimationFrame(() => this.animate());
+      }
+
+      render(time) {
+        const { width, height } = this.canvas;
+        const ctx = this.ctx;
+
+        // Clear
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, height);
+
+        switch(this.theme) {
+          case 'cosmic':
+            this.renderCosmic(time);
+            break;
+          case 'ocean':
+            this.renderOcean(time);
+            break;
+          case 'fire':
+            this.renderFire(time);
+            break;
+          case 'custom':
+            this.renderCustom(time);
+            break;
+        }
+      }
+
+      renderCosmic(time) {
+        const { width, height, ctx } = this;
+        
+        // Radial gradient background
+        const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height) * 0.7);
+        gradient.addColorStop(0, `rgba(10, 10, 50, ${0.5 + Math.sin(time * 0.2) * 0.1})`);
+        gradient.addColorStop(1, 'rgba(50, 0, 80, 1)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Stars
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        for (let i = 0; i < 100; i++) {
+          const x = (i * 137.5 + time * 20) % width;
+          const y = (i * 73.3) % height;
+          const size = 1 + Math.sin(time + i) * 0.5;
+          ctx.fillRect(x, y, size, size);
+        }
+
+        // Nebula waves
+        ctx.strokeStyle = 'rgba(138, 43, 226, 0.3)';
+        ctx.lineWidth = 3;
+        for (let w = 0; w < 3; w++) {
+          ctx.beginPath();
+          for (let x = 0; x < width; x += 5) {
+            const y = height/2 + Math.sin((x/width) * Math.PI * 3 + time * 0.5 + w) * 80 + w * 30;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+      }
+
+      renderOcean(time) {
+        const { width, height, ctx } = this;
+        
+        // Ocean gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, 'rgb(0, 105, 148)');
+        gradient.addColorStop(1, 'rgb(0, 191, 255)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Waves
+        ctx.strokeStyle = 'rgba(30, 144, 255, 0.6)';
+        ctx.lineWidth = 2;
+        for (let w = 0; w < 4; w++) {
+          ctx.beginPath();
+          for (let x = 0; x < width; x += 3) {
+            const y = height/2 + Math.sin((x/width) * Math.PI * 4 + time * 1.2 + w * 0.5) * 60 + w * 20;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+
+        // Bubbles
+        ctx.fillStyle = 'rgba(173, 216, 230, 0.5)';
+        for (let i = 0; i < 20; i++) {
+          const x = (i * 73.5 + time * 5) % width;
+          const y = height - ((i * 137.3 + time * 40) % height);
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      renderFire(time) {
+        const { width, height, ctx } = this;
+        
+        // Dark background
+        ctx.fillStyle = 'rgba(10, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, width, height);
+
+        // Fire particles
+        for (let i = 0; i < 100; i++) {
+          const x = (i * 43.7) % width;
+          const baseY = height + ((i * 79.3 + time * 80) % (height * 1.2));
+          const y = baseY - (time * 100 + i * 10) % (height * 1.5);
+          
+          if (y < height && y > 0) {
+            const life = 1 - (y / height);
+            const alpha = life * 0.8;
+            
+            ctx.fillStyle = `rgba(255, ${100 + life * 155}, 0, ${alpha})`;
+            ctx.beginPath();
+            ctx.arc(x + Math.sin(time + i) * 20, y, 4 + Math.random() * 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      renderCustom(time) {
+        const { width, height, ctx } = this;
+        
+        // Animated gradient
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, `rgba(100, 50, 200, ${0.5 + Math.sin(time * 0.3) * 0.2})`);
+        gradient.addColorStop(1, 'rgba(50, 150, 255, 1)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Particles
+        ctx.fillStyle = 'rgba(200, 200, 255, 0.6)';
+        for (let i = 0; i < 50; i++) {
+          const x = (i * 137.5 + time * 20) % width;
+          const y = (i * 73.3 + time * 30) % height;
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Waves
+        ctx.strokeStyle = 'rgba(100, 200, 255, 0.4)';
+        ctx.lineWidth = 3;
+        for (let w = 0; w < 3; w++) {
+          ctx.beginPath();
+          for (let x = 0; x < width; x += 5) {
+            const y = height/2 + Math.sin((x/width) * Math.PI * 2 + time + w) * 50 + w * 20;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+      }
+
+      getConfig() {
+        return {
+          theme: this.theme,
+          layers: this.theme === 'cosmic' ? 3 : this.theme === 'ocean' ? 3 : this.theme === 'fire' ? 2 : 3,
+          nodes: this.theme === 'cosmic' ? ['Gradient', 'Particle', 'Wave'] : 
+                 this.theme === 'ocean' ? ['Gradient', 'Wave', 'Particle'] :
+                 this.theme === 'fire' ? ['Gradient', 'Particle'] :
+                 ['Gradient', 'Particle', 'Wave'],
+          aiOptimizations: Math.floor(Math.random() * 3) + 1
+        };
+      }
+    }
+
+    function loadScene(theme, name) {
+      if (currentAura) {
+        currentAura.stop();
+      }
+      currentAura = new MockAura(theme);
+      currentAura.start();
+      updateSceneInfo(name);
+    }
+
+    function updateSceneInfo(sceneName) {
+      const config = currentAura.getConfig();
+      const info = `Scene: ${sceneName}
+Theme: ${config.theme}
+Layers: ${config.layers}
+Nodes: ${config.nodes.join(', ')}
+AI Optimizations Applied: ${config.aiOptimizations}
+FPS Target: 60
+Rendering: Canvas 2D
+Status: ${isAnimating ? 'Active' : 'Paused'}`;
+      document.getElementById('scene-info').textContent = info;
+    }
+
+    window.loadCosmicScene = () => loadScene('cosmic', 'Cosmic Space');
+    window.loadOceanScene = () => loadScene('ocean', 'Ocean Waves');
+    window.loadFireScene = () => loadScene('fire', 'Fire Energy');
+    window.loadCustomScene = () => loadScene('custom', 'Custom Mix');
+
+    window.toggleAnimation = () => {
+      if (isAnimating) {
+        currentAura.stop();
+        isAnimating = false;
+      } else {
+        currentAura.start();
+        isAnimating = true;
+      }
+      updateSceneInfo(currentAura.theme);
+    };
+
+    window.exportConfig = () => {
+      const config = currentAura.getConfig();
+      const dataStr = JSON.stringify(config, null, 2);
+      console.log('Exported Configuration:', dataStr);
+      alert('Configuration exported to console!\n\n' + dataStr);
+    };
+
+    // Load default scene
+    loadCosmicScene();
+  </script>
+</body>
+</html>
