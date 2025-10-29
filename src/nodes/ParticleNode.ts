@@ -17,6 +17,8 @@ interface Particle {
 export class ParticleNode extends Node {
   private particles: Particle[] = [];
   private lastSpawnTime: number = 0;
+  private lastCanvasWidth: number = 800;
+  private lastCanvasHeight: number = 600;
 
   constructor(id: string) {
     super(id, 'Particle System', 'particle');
@@ -82,8 +84,12 @@ export class ParticleNode extends Node {
     const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
     const baseAngle = Math.atan2(velocityY, velocityX);
 
+    // Store last known canvas dimensions or use defaults
+    const canvasWidth = this.lastCanvasWidth || 800;
+    const canvasHeight = this.lastCanvasHeight || 600;
+
     this.particles.push({
-      position: { x: Math.random() * 800, y: Math.random() * 600 },
+      position: { x: Math.random() * canvasWidth, y: Math.random() * canvasHeight },
       velocity: {
         x: Math.cos(baseAngle + angle) * speed,
         y: Math.sin(baseAngle + angle) * speed
@@ -116,7 +122,13 @@ export class ParticleNode extends Node {
     });
   }
 
-  private render(ctx: CanvasRenderingContext2D, _context: any): void {
+  private render(ctx: CanvasRenderingContext2D, context: any): void {
+    // Update canvas dimensions for particle spawning
+    if (context && context.width && context.height) {
+      this.lastCanvasWidth = context.width;
+      this.lastCanvasHeight = context.height;
+    }
+
     this.particles.forEach(particle => {
       ctx.save();
       ctx.globalAlpha = particle.color.a;

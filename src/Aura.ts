@@ -7,7 +7,6 @@ import { LayerManager, Layer, LayerConfig } from './layers/Layer';
 import { NodeGraph } from './core/NodeGraph';
 import { Node } from './core/Node';
 import { AIAssistant } from './ai/AIAssistant';
-import { BlendMode } from './core/types';
 
 export interface AuraConfig {
   canvas: HTMLCanvasElement;
@@ -45,17 +44,9 @@ export class Aura {
   /**
    * Create a new layer
    */
-  createLayer(config: Partial<LayerConfig> & { id: string; name: string }): Layer {
-    const fullConfig: LayerConfig = {
-      visible: config.visible ?? true,
-      opacity: config.opacity ?? 1.0,
-      blendMode: config.blendMode ?? BlendMode.Normal,
-      zIndex: config.zIndex ?? 0,
-      ...config
-    };
-
+  createLayer(config: LayerConfig): Layer {
     const layer = new Layer(
-      fullConfig,
+      config,
       this.renderer['width'],
       this.renderer['height']
     );

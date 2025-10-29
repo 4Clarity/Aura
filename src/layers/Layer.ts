@@ -8,10 +8,10 @@ import { Node } from '../core/Node';
 export interface LayerConfig {
   id: string;
   name: string;
-  visible: boolean;
-  opacity: number;
-  blendMode: BlendMode;
-  zIndex: number;
+  visible?: boolean;
+  opacity?: number;
+  blendMode?: BlendMode;
+  zIndex?: number;
 }
 
 export class Layer {
@@ -29,10 +29,10 @@ export class Layer {
   constructor(config: LayerConfig, width: number, height: number) {
     this.id = config.id;
     this.name = config.name;
-    this.visible = config.visible;
-    this.opacity = config.opacity;
-    this.blendMode = config.blendMode;
-    this.zIndex = config.zIndex;
+    this.visible = config.visible ?? true;
+    this.opacity = config.opacity ?? 1.0;
+    this.blendMode = config.blendMode ?? BlendMode.Normal;
+    this.zIndex = config.zIndex ?? 0;
 
     // Create offscreen canvas for this layer
     this.canvas = document.createElement('canvas');

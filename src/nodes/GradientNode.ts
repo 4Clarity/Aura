@@ -85,10 +85,15 @@ export class GradientNode extends Node {
       const radius = Math.max(width, height) * 0.7;
       gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
     } else {
-      // conic
+      // conic - with fallback for older browsers
       const centerX = width / 2;
       const centerY = height / 2;
-      gradient = ctx.createConicGradient(offset * Math.PI * 2, centerX, centerY);
+      if (typeof ctx.createConicGradient === 'function') {
+        gradient = ctx.createConicGradient(offset * Math.PI * 2, centerX, centerY);
+      } else {
+        // Fallback to radial gradient for browsers without conic gradient support
+        gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(width, height) * 0.7);
+      }
     }
 
     const color1 = `rgb(${color1R}, ${color1G}, ${color1B})`;
